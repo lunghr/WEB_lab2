@@ -66,18 +66,36 @@
             <%--@declare id="r-label"--%>
             <label for="r-label">Choose R parameter:</label>
             <input class="r-button"  type="button" value="1">
-            <input class="r-button"  type="button" value="1">
             <input class="r-button" type="button" value="1.5">
             <input class="r-button" type="button" value="2">
             <input class="r-button"  type="button" value="2.5">
             <input class="r-button"  type="button" value="3">
             <br>
         </div>
+        <input id="R-storage" type="text" hidden="hidden">
     </section>
     <button type="button" id="submit-button">check</button>
     <button type="button" id="submit-r-button">set radius</button>
     <div id="error-message"></div>
 </form>
+
+<section class="output-container">
+    <section id="history-block">
+        <section id="labels">
+            <label id="history-label">Arguments</label>
+            <label id="time-label">Time</label>
+            <label id="exTime-label">Execution time</label>
+            <label id="hitting-label">Hitting</label>
+        </section>
+        <section id="history-section">
+            <div id="history"></div>
+            <div id="time"></div>
+            <div id="execution-time"></div>
+            <div id="hitting"></div>
+        </section>
+
+    </section>
+</section>
 <div id="response"></div>
 <script defer src="JavaScript/graph.js"></script>
 <script defer src="JavaScript/index.js"></script>

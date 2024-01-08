@@ -5,6 +5,11 @@ const setRButton = document.getElementById("submit-r-button");
 const yInput=document.getElementById("y-input-field");
 const yError = document.getElementById("y-error");
 const R = document.querySelectorAll('.r-button');
+const time = document.getElementById("time");
+const executionTime = document.getElementById("execution-time");
+const history = document.getElementById("history");
+const hitting = document.getElementById("hitting");
+const sR = document.getElementById("R-storage")
 
 let yMarker = true;
 
@@ -34,6 +39,8 @@ submitButton.addEventListener("click", function (e) {
         return;
     }
     let r = tmpR.value;
+    sR.textContent = tmpR.value;
+    console.log(sR.textContent)
 
     let xCheckboxes = document.getElementsByName("x");
     let selectedXValues = [];
@@ -50,7 +57,7 @@ submitButton.addEventListener("click", function (e) {
     else {
         errorMsg.textContent = ""
     }
-
+    console.log(typeof y, typeof r)
     let params = formData(selectedXValues, y, r);
     let tmpResponse = [];
 
@@ -60,22 +67,21 @@ submitButton.addEventListener("click", function (e) {
         if (!response.ok) {
             throw new Error("unlucky");
         }
-        console.log(response);
         return response.text();
     })
         .then(data => {
-            response.textContent = data;
+            // response.textContent = data;
             tmpResponse = data.split(';');
             let xs = tmpResponse[0].split(',');
-            console.log(xs,tmpResponse[1], tmpResponse[2])
             drawGraph(tmpResponse[2]);
             drawDots(xs,tmpResponse[1], tmpResponse[2]);
+            controlHistory(tmpResponse);
         })
         .catch(error => {
             console.log("unlucky");
         });
 
-    cleanFormData(xCheckboxes);
+    //cleanFormData(xCheckboxes);
 });
 
 setRButton.addEventListener("click", function (e){
@@ -92,9 +98,25 @@ setRButton.addEventListener("click", function (e){
         return;
     }
 
-    let r = tmpR.value;
+    sR.textContent = tmpR.value;
+    drawGraph(sR.textContent);
+})
 
-    let params = formData(0, 0, r);
+canvas.addEventListener("click", function (e) {
+    e.preventDefault();
+
+
+    if(sR.textContent === ""){
+        errorMsg.textContent = "U need to select the radius";
+        return;
+    }
+
+    let xC = String((e.clientX - canvas.getBoundingClientRect().left - 200) / 30);
+    console.log(typeof xC, xC);
+    let yC = String(-(e.clientY - canvas.getBoundingClientRect().top - 200) / 30);
+    console.log(typeof yC, yC);
+    drawDots([xC], yC, sR.textContent);
+    let params = formData(xC, yC, sR.textContent);
     let tmpResponse = [];
 
     fetch(`controllerServlet?${params}`, {
@@ -103,37 +125,17 @@ setRButton.addEventListener("click", function (e){
         if (!response.ok) {
             throw new Error("unlucky");
         }
-        console.log(response);
         return response.text();
     })
         .then(data => {
-            response.textContent = data;
+            console.log(data);
             tmpResponse = data.split(';');
-            let xs = tmpResponse[0].split(',');
-            console.log(xs,tmpResponse[1], tmpResponse[2])
-            drawGraph(tmpResponse[2]);
+            controlHistory(tmpResponse);
         })
         .catch(error => {
             console.log("unlucky");
         });
-})
 
-canvas.addEventListener("click", function (e){
-    e.preventDefault();
-
-    let xC = (e.clientX - canvas.getBoundingClientRect().left - 200) / 30;
-    console.log(xC);
-    let yC = -(e.clientY - canvas.getBoundingClientRect().top - 200) / 30;
-    console.log(yC);
-    let tmpR = document.querySelector(".r-button:disabled");
-
-    if(tmpR === null){
-        errorMsg.textContent = "U need to select the radius";
-        return;
-    }
-    const r = tmpR.value;
-
-    drawDots([xC], yC, r);
 });
 
 yInput.addEventListener("input", function () {
@@ -151,3 +153,31 @@ yInput.addEventListener("input", function () {
 });
 
 
+
+
+
+
+
+function controlHistory(tmpResponse){
+    let x = tmpResponse[0].split(',');
+    let exTime = tmpResponse[4].split(',');
+    let hit = tmpResponse[3].split(',');
+
+    for(let i = 0; i < x.length; i++){
+        const historyEl = document.createElement("div");
+        const timeEl = document.createElement("div");
+        const exTimeEl = document.createElement("div");
+        const hittingEl = document.createElement("div");
+
+
+        historyEl.textContent = "x:"+x[i]+" y:"+tmpResponse[1]+" r:"+tmpResponse[2];
+        exTimeEl.textContent = exTime[i];
+        timeEl.textContent = tmpResponse[5];
+        hittingEl.textContent = hit[i];
+        hitting.insertBefore(hittingEl, hitting.firstChild);
+        history.insertBefore(historyEl, history.firstChild);
+        time.insertBefore(timeEl, time.firstChild);
+        executionTime.insertBefore(exTimeEl, executionTime.firstChild)
+    }
+
+}
