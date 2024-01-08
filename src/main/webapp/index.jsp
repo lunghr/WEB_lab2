@@ -76,11 +76,12 @@
     </section>
     <button type="button" id="submit-button">check</button>
     <button type="button" id="submit-r-button">set radius</button>
-    <div id="error-message">da blyat'</div>
+    <div id="error-message"></div>
 </form>
 <div id="response"></div>
 <script defer src="JavaScript/graph.js"></script>
 <script defer src="JavaScript/index.js"></script>
+<script defer src="JavaScript/utils.js"></script>
 
 </body>
 </html>

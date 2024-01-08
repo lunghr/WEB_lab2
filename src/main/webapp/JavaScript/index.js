@@ -1,10 +1,12 @@
-
-const R = document.querySelectorAll('.r-button');
+const errorMsg = document.getElementById("error-message");
 const response = document.getElementById("response");
 const submitButton= document.getElementById("submit-button");
-const graph = document.getElementById("canvas");
 const setRButton = document.getElementById("submit-r-button");
-const errorMsg = document.getElementById("error-message");
+const yInput=document.getElementById("y-input-field");
+const yError = document.getElementById("y-error");
+const R = document.querySelectorAll('.r-button');
+
+let yMarker = true;
 
 R.forEach(function (button){
     button.addEventListener("click", function (){
@@ -21,17 +23,17 @@ R.forEach(function (button){
 window.onload = function (){
     drawAxes();
 }
+
 submitButton.addEventListener("click", function (e) {
     e.preventDefault();
 
     const y = document.getElementById("y-input-field").value.replace(",", ".");
     let tmpR = document.querySelector(".r-button:disabled");
 
-    if(tmpR === null){
-        errorMsg.textContent = "U need to select the radius";
+    if(!validateRSelection(tmpR)){
         return;
     }
-    const r = tmpR.value;
+    let r = tmpR.value;
 
     let xCheckboxes = document.getElementsByName("x");
     let selectedXValues = [];
@@ -45,7 +47,9 @@ submitButton.addEventListener("click", function (e) {
         errorMsg.textContent = "Not all parameters are filled in!";
         return;
     }
-    else {errorMsg.textContent = ""}
+    else {
+        errorMsg.textContent = ""
+    }
 
     let params = formData(selectedXValues, y, r);
     let tmpResponse = [];
@@ -70,20 +74,25 @@ submitButton.addEventListener("click", function (e) {
         .catch(error => {
             console.log("unlucky");
         });
-});
 
+    cleanFormData(xCheckboxes);
+});
 
 setRButton.addEventListener("click", function (e){
     e.preventDefault();
 
+    let xCheckboxes = document.getElementsByName("x");
+    cleanFormData(xCheckboxes);
+
+    errorMsg.textContent = "";
+
     let tmpR = document.querySelector(".r-button:disabled");
 
-    if(tmpR === null){
-        errorMsg.textContent = "U need to select the radius";
+    if(!validateRSelection(tmpR)){
         return;
     }
-    const r = tmpR.value;
 
+    let r = tmpR.value;
 
     let params = formData(0, 0, r);
     let tmpResponse = [];
@@ -107,16 +116,10 @@ setRButton.addEventListener("click", function (e){
         .catch(error => {
             console.log("unlucky");
         });
-
-
-
-
-
 })
 
 canvas.addEventListener("click", function (e){
     e.preventDefault();
-
 
     let xC = (e.clientX - canvas.getBoundingClientRect().left - 200) / 30;
     console.log(xC);
@@ -131,30 +134,20 @@ canvas.addEventListener("click", function (e){
     const r = tmpR.value;
 
     drawDots([xC], yC, r);
+});
 
+yInput.addEventListener("input", function () {
+    let tmpY = yInput.value;
+    tmpY = tmpY.replace(",", ".")
 
-
+    if(isValidY(tmpY)){
+        yError.style.visibility =  "hidden";
+        yMarker = false;
+    }
+    else{
+        yError.style.visibility = "visible";
+        yMarker = true;
+    }
 });
 
 
-
-
-function validateFormValues(x,y,r) {
-    return (x.length === 0 || y === '' || r === undefined)
-}
-
-function validateR(r, submit_button){
-}
-
-function formData(x, y, r){
-    if (!Array.isArray(x)){
-        x = [x];
-    }
-    let formData = {
-        X: x.join(","),
-        Y: y,
-        R: r
-    };
-
-    return new URLSearchParams(formData);
-}

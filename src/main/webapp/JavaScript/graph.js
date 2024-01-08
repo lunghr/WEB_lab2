@@ -1,11 +1,15 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+
+
 const axisLength = 300;
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
+
+
 function drawAxes() {
 
-    // Ось X
+    //X
     context.beginPath();
     context.moveTo(centerX - axisLength / 2, centerY);
     context.lineTo(centerX + axisLength / 2, centerY);
@@ -13,7 +17,7 @@ function drawAxes() {
     context.stroke();
     context.closePath();
 
-    // Ось Y
+    //Y
     context.beginPath();
     context.moveTo(centerX, centerY - axisLength / 2);
     context.lineTo(centerX, centerY + axisLength / 2);
@@ -21,20 +25,20 @@ function drawAxes() {
     context.stroke();
     context.closePath();
 
-    // Подписи к осям
+    // Axis captions
     context.font = '16px Cambria';
     context.fillStyle = 'black';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
 
-    // Подпись к оси X
+    // X-axis caption
     context.fillText('X', centerX + axisLength / 2 + 20, centerY + 10);
 
-    // Подпись к оси Y
+    // Y-axis caption
     context.fillText('Y', centerX - 10, centerY - axisLength / 2 - 20);
 
 
-    // Треугольник на конце оси X
+    // Triangle at the end of the X axis
     context.beginPath();
     context.moveTo(centerX + axisLength / 2 - 10, centerY - 3);
     context.lineTo((centerX + axisLength / 2)+3, centerY);
@@ -43,7 +47,7 @@ function drawAxes() {
     context.fill();
     context.closePath();
 
-    // Треугольник на конце оси Y
+    // Triangle at the end of the Y axis
     context.beginPath();
     context.moveTo(centerX - 3, centerY - axisLength / 2 + 10);
     context.lineTo(centerX, (centerY - axisLength/ 2)-3);
@@ -53,7 +57,7 @@ function drawAxes() {
     context.closePath();
 
 
-    // Подписи целых чисел на оси X
+    // Signatures of integers on the X axis
     for (let i = -5; i <= 5; i++) {
         if (i !== 0) {
             const tickX = centerX + (i * axisLength) / 10;
@@ -73,19 +77,13 @@ function drawAxes() {
     }
 }
 
-
-
-let x = 2 ;
-let y= 2 ;
-let r = 3 ;
-
 function drawGraph(r){
     context.clearRect(0, 0, 400, 400)
     drawAxes();
 
     r = r * 30;
 
-    //треугольник
+    //triangle
     context.beginPath();
     context.fillStyle ='rgba(255, 0, 0, 0.5)';
     context.moveTo(centerX, centerY - (r/2));
@@ -95,7 +93,7 @@ function drawGraph(r){
     context.fill();
     context.closePath();
 
-    //прямоугольник
+    //rectangle
     context.beginPath();
     context.fillStyle ='rgba(255, 0, 0, 0.5)';
     context.moveTo(centerX, centerY - (r/2));
@@ -107,7 +105,7 @@ function drawGraph(r){
     context.closePath();
 
 
-    //полукруг
+    //semicircle
     context.beginPath();
     context.fillStyle ='rgba(255, 0, 0, 0.5)';
 
@@ -122,15 +120,12 @@ function drawGraph(r){
 function drawDots(xs, y, r) {
     const originalColor = context.fillStyle;
 
-    // Точки
-
     xs.forEach(x=>{
         const X = centerX + x * 30;
         const Y = centerY - y * 30;
         context.beginPath();
         context.arc(X, Y, 2, 0, 2 * Math.PI);
 
-        console.log("meow");
         if (validation(x, y, r)) {
             context.fillStyle = 'green';
         } else {
@@ -139,7 +134,6 @@ function drawDots(xs, y, r) {
         context.fill();
         context.closePath();
     })
-
 
     context.fillStyle = originalColor;
 }
