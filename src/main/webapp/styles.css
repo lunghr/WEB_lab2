@@ -1,0 +1,20 @@
+body{
+    background: #6fa0ff;
+    color: #323242;
+    font-family: Cambria, serif;
+}
+
+#user-input{
+    border: 2px solid black;
+    height: 250px;
+    width: 400px;
+    justify-content: center;
+}
+
+#y-error{
+    visibility: hidden;
+    color: #805b5b;
+    position: relative;
+    font-size: 12px;
+}
+

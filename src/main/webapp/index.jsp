@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <title>Title</title>
 </head>
 <body>
@@ -71,10 +72,11 @@
             <input class="r-button"  type="button" value="2.5">
             <input class="r-button"  type="button" value="3">
             <br>
-            <span id="r-error" >Incorrect R parameter</span>
         </div>
     </section>
-    <button type="submit" id="submit-button">check</button>
+    <button type="button" id="submit-button">check</button>
+    <button type="button" id="submit-r-button">set radius</button>
+    <div id="error-message">da blyat'</div>
 </form>
 <div id="response"></div>
 <script defer src="JavaScript/graph.js"></script>

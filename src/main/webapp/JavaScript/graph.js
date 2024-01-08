@@ -157,5 +157,5 @@ function validation(x, y, r) {
     return false;
 }
 
-drawGraph(r);
+
 
