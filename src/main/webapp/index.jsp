@@ -78,7 +78,7 @@
     <button type="button" id="submit-r-button">set radius</button>
     <div id="error-message"></div>
 </form>
-
+<button onclick="document.location='resultsTable.jsp'">таблица результатов</button>
 <section class="output-container">
     <section id="history-block">
         <section id="labels">
@@ -93,13 +93,16 @@
             <div id="execution-time"></div>
             <div id="hitting"></div>
         </section>
-
+        <input id="history-storage" type="text" hidden="hidden">
     </section>
 </section>
+<button type="button" id="clear-button">check</button>
+<button onclick="document.location='resultsTable.jsp'">таблица результатов</button>
 <div id="response"></div>
 <script defer src="JavaScript/graph.js"></script>
 <script defer src="JavaScript/index.js"></script>
 <script defer src="JavaScript/utils.js"></script>
+
 
 </body>
 </html>

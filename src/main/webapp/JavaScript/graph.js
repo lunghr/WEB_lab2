@@ -41,7 +41,7 @@ function drawAxes() {
     // Triangle at the end of the X axis
     context.beginPath();
     context.moveTo(centerX + axisLength / 2 - 10, centerY - 3);
-    context.lineTo((centerX + axisLength / 2)+3, centerY);
+    context.lineTo((centerX + axisLength / 2) + 3, centerY);
     context.lineTo(centerX + axisLength / 2 - 10, centerY + 3);
     context.fillStyle = 'black';
     context.fill();
@@ -50,7 +50,7 @@ function drawAxes() {
     // Triangle at the end of the Y axis
     context.beginPath();
     context.moveTo(centerX - 3, centerY - axisLength / 2 + 10);
-    context.lineTo(centerX, (centerY - axisLength/ 2)-3);
+    context.lineTo(centerX, (centerY - axisLength / 2) - 3);
     context.lineTo(centerX + 3, centerY - axisLength / 2 + 10);
     context.fillStyle = 'black';
     context.fill();
@@ -62,8 +62,7 @@ function drawAxes() {
         if (i !== 0) {
             const tickX = centerX + (i * axisLength) / 10;
             context.fillText(i, tickX, centerY + 10);
-        }
-        else{
+        } else {
             const tickX = (centerX + (i * axisLength) / 10) + 6;
             context.fillText(i, tickX, centerY + 10);
         }
@@ -72,12 +71,12 @@ function drawAxes() {
     for (let i = -5; i <= 5; i++) {
         if (i !== 0) {
             const tickY = centerY - (i * axisLength) / 10;
-            context.fillText(i, centerX+10, tickY);
+            context.fillText(i, centerX + 10, tickY);
         }
     }
 }
 
-function drawGraph(r){
+function drawGraph(r) {
     context.clearRect(0, 0, 400, 400)
     drawAxes();
 
@@ -85,31 +84,31 @@ function drawGraph(r){
 
     //triangle
     context.beginPath();
-    context.fillStyle ='rgba(255, 0, 0, 0.5)';
-    context.moveTo(centerX, centerY - (r/2));
-    context.lineTo(centerX + (r/2), centerY);
+    context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+    context.moveTo(centerX, centerY - (r / 2));
+    context.lineTo(centerX + (r / 2), centerY);
     context.lineTo(centerX, centerY);
-    context.lineTo(centerX, centerY-(r/2))
+    context.lineTo(centerX, centerY - (r / 2))
     context.fill();
     context.closePath();
 
     //rectangle
     context.beginPath();
-    context.fillStyle ='rgba(255, 0, 0, 0.5)';
-    context.moveTo(centerX, centerY - (r/2));
-    context.lineTo(centerX - r, centerY - (r/2));
+    context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+    context.moveTo(centerX, centerY - (r / 2));
+    context.lineTo(centerX - r, centerY - (r / 2));
     context.lineTo(centerX - r, centerY);
     context.lineTo(centerX, centerY);
-    context.lineTo(centerX, centerY-(r/2));
+    context.lineTo(centerX, centerY - (r / 2));
     context.fill();
     context.closePath();
 
 
     //semicircle
     context.beginPath();
-    context.fillStyle ='rgba(255, 0, 0, 0.5)';
+    context.fillStyle = 'rgba(255, 0, 0, 0.5)';
 
-    context.arc(centerX, centerY, r , Math.PI / 2, Math.PI);
+    context.arc(centerX, centerY, r, Math.PI / 2, Math.PI);
     context.lineTo(centerX, centerY);
     context.fill();
     context.closePath();
@@ -120,7 +119,7 @@ function drawGraph(r){
 function drawDots(xs, y, r) {
     const originalColor = context.fillStyle;
 
-    xs.forEach(x=>{
+    xs.forEach(x => {
         const X = centerX + x * 30;
         const Y = centerY - y * 30;
         context.beginPath();
@@ -139,13 +138,11 @@ function drawDots(xs, y, r) {
 }
 
 function validation(x, y, r) {
-    if ((x <= 0 && y >= 0) && (x >= -r && y <= (r/2))){
+    if ((x <= 0 && y >= 0) && (x >= -r && y <= (r / 2))) {
         return true;
-    }
-    else if ((x <= 0 && y <= 0) && ((r*r) >= (x * x + y * y))) {
+    } else if ((x <= 0 && y <= 0) && ((r * r) >= (x * x + y * y))) {
         return true;
-    }
-    else if (x >= 0 && x <= r/2 && y >= 0 && y<=r/2 && (x + y)<= r/2) {
+    } else if ((x >= 0 && x <= r / 2) && (y >= 0 && y <= r / 2) && (parseFloat(x) + parseFloat(y)) <= (parseFloat(r) / 2)) {
         return true;
     }
     return false;

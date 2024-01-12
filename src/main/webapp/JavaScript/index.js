@@ -9,9 +9,69 @@ const time = document.getElementById("time");
 const executionTime = document.getElementById("execution-time");
 const history = document.getElementById("history");
 const hitting = document.getElementById("hitting");
-const sR = document.getElementById("R-storage")
+const sR = document.getElementById("R-storage");
+let lastRequestHistory = document.getElementById("history-storage");
 
 let yMarker = true;
+
+let lastRequest = [];
+let tableData = [];
+
+const TABLE_SAVE_LOCATION = "lab_1_table_data";
+
+const saveField = (name, value) => {
+    localStorage.setItem(name, value);
+}
+function saveTable (){
+    saveField(TABLE_SAVE_LOCATION, btoa(JSON.stringify(tableData)))
+}
+const getField = name => {
+    return localStorage.getItem(name)
+}
+
+const restoreTable = () => {
+
+    console.log("restore table data")
+    const rawTableData = getField(TABLE_SAVE_LOCATION)
+    if (!rawTableData) {
+        return
+    }
+
+    console.log("ops")
+    const data = JSON.parse(atob(rawTableData))
+    tableData = data
+    console.log(tableData);
+    data.forEach(it => controlHistory(it))
+}
+
+const showHit = () => {
+    fetch("data-servlet")
+        .then(response => response.text())
+        .then(data => {
+            let responseData = data.split(';');
+            console.log("showHit:" + data);
+
+            tableData.push(responseData);
+            saveTable();
+            controlHistory(responseData);
+        })
+        .catch(() =>{})
+}
+
+const saveData = data => {
+    console.log("save data: " + data);
+    fetch('data-servlet', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body:data
+    })
+        .then(response => response.text())
+        .then(body => {
+            console.log(body)
+        })
+}
 
 R.forEach(function (button){
     button.addEventListener("click", function (){
@@ -27,10 +87,16 @@ R.forEach(function (button){
 
 window.onload = function (){
     drawAxes();
+    restoreTable();
+
 }
 
 submitButton.addEventListener("click", function (e) {
     e.preventDefault();
+
+    lastRequestHistory.textContent = '';
+    localStorage.removeItem("last");
+
 
     const y = document.getElementById("y-input-field").value.replace(",", ".");
     let tmpR = document.querySelector(".r-button:disabled");
@@ -40,7 +106,6 @@ submitButton.addEventListener("click", function (e) {
     }
     let r = tmpR.value;
     sR.textContent = tmpR.value;
-    console.log(sR.textContent)
 
     let xCheckboxes = document.getElementsByName("x");
     let selectedXValues = [];
@@ -57,35 +122,37 @@ submitButton.addEventListener("click", function (e) {
     else {
         errorMsg.textContent = ""
     }
-    console.log(typeof y, typeof r)
     let params = formData(selectedXValues, y, r);
-    let tmpResponse = [];
-
-    fetch(`controllerServlet?${params}`, {
+    fetch(`checkServlet?${params}`, {
         method: "GET"
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error("unlucky");
-        }
-        return response.text();
     })
-        .then(data => {
-            // response.textContent = data;
-            tmpResponse = data.split(';');
-            let xs = tmpResponse[0].split(',');
-            drawGraph(tmpResponse[2]);
-            drawDots(xs,tmpResponse[1], tmpResponse[2]);
-            controlHistory(tmpResponse);
+        .then(response => response.text())
+        .then(data =>{
+            let tmpString = lastRequestHistory.textContent;
+            tmpString = data + " " + tmpString;
+            lastRequestHistory.textContent = tmpString;
+            localStorage.setItem('last', lastRequestHistory.textContent);
+            console.log("checkServlet response data:" + data);
+            let tmp = data.split(';');
+            saveData(data);
+            showHit();
+            let xs = tmp[0].split(',');
+            drawGraph(tmp[2]);
+            drawDots(xs,tmp[1], tmp[2]);
         })
-        .catch(error => {
-            console.log("unlucky");
-        });
+
+
+
+
 
     //cleanFormData(xCheckboxes);
 });
 
 setRButton.addEventListener("click", function (e){
     e.preventDefault();
+    lastRequestHistory.textContent = "";
+
+    localStorage.removeItem("last");
 
     let xCheckboxes = document.getElementsByName("x");
     cleanFormData(xCheckboxes);
@@ -101,7 +168,7 @@ setRButton.addEventListener("click", function (e){
     sR.textContent = tmpR.value;
     drawGraph(sR.textContent);
 })
-
+const truncateString = (s, w) => s.length > w ? s.slice(0, w) + "..." : s;
 canvas.addEventListener("click", function (e) {
     e.preventDefault();
 
@@ -111,30 +178,33 @@ canvas.addEventListener("click", function (e) {
         return;
     }
 
-    let xC = String((e.clientX - canvas.getBoundingClientRect().left - 200) / 30);
-    console.log(typeof xC, xC);
+    let xC = String(((e.clientX - canvas.getBoundingClientRect().left - 200) / 30));
+    if (xC.length > 7){
+        xC = xC.slice(0, 7);
+    }
     let yC = String(-(e.clientY - canvas.getBoundingClientRect().top - 200) / 30);
     console.log(typeof yC, yC);
+    if (yC.length > 7){
+        yC = yC.slice(0, 7);
+    }
+
     drawDots([xC], yC, sR.textContent);
     let params = formData(xC, yC, sR.textContent);
-    let tmpResponse = [];
 
     fetch(`checkServlet?${params}`, {
         method: "GET"
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error("unlucky");
-        }
-        return response.text();
     })
-        .then(data => {
-            console.log(data);
-            tmpResponse = data.split(';');
-            controlHistory(tmpResponse);
+        .then(response => response.text())
+        .then(data =>{
+            console.log("checkServlet response data:" + data);
+            let tmp = data.split(';');
+            saveData(data);
+            showHit();
+            let tmpString = lastRequestHistory.textContent;
+            tmpString = data + " " + tmpString;
+            lastRequestHistory.textContent = tmpString;
+            localStorage.setItem('last', lastRequestHistory.textContent);
         })
-        .catch(error => {
-            console.log("unlucky");
-        });
 
 });
 
@@ -159,7 +229,18 @@ yInput.addEventListener("input", function () {
 
 
 function controlHistory(tmpResponse){
+
+    if (tmpResponse.length === 0){
+        return;
+    }
+
+    if(tmpResponse[0] === "No data available"){
+        return;
+    }
+    console.log("controlHistory: " + tmpResponse);
     let x = tmpResponse[0].split(',');
+
+    console.log(x);
     let exTime = tmpResponse[4].split(',');
     let hit = tmpResponse[3].split(',');
 
@@ -179,5 +260,11 @@ function controlHistory(tmpResponse){
         time.insertBefore(timeEl, time.firstChild);
         executionTime.insertBefore(exTimeEl, executionTime.firstChild)
     }
+
+
+
+
+
+
 
 }

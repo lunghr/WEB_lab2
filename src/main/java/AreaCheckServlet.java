@@ -87,9 +87,6 @@ public class AreaCheckServlet extends HttpServlet {
 
 
         out.print(res);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("test", res);
         out.close();
     }
 }

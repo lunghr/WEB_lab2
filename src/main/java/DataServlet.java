@@ -43,8 +43,9 @@ public class DataServlet extends HttpServlet {
         }
 
         String data = sb.toString();
-
-        session.setAttribute(ATTRIBUTE, data);
+        if (!data.equals("No data available")){
+            session.setAttribute(ATTRIBUTE, data);
+        }
         response.setStatus(200);
         out.print("Value of form data has updated");
     }
